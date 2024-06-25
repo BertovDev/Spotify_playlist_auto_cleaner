@@ -68,5 +68,5 @@ def debug():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app)
-    # debug()
+    # uvicorn.run(app)
+    debug()

@@ -1,7 +1,9 @@
 import requests
 from urllib.parse import urlparse
 import json
-import os
+
+
+TOTAL_ALLOWED_TIME_IN_SECODS = 10200  # 2hs 30min
 
 
 class SpotifyClient:
@@ -21,19 +23,18 @@ class SpotifyClient:
         return response_json
 
     def get_playlist_total_dutation(self, playlist):
-        tracks = [track for track in playlist['tracks']['items']]
-        total_time_seconds = 0
-        for track in tracks:
-            total_time_seconds += track["track"]["duration_ms"]
+        tracks = playlist['tracks']['items']
+        total_time_seconds = sum(
+            track["track"]["duration_ms"] for track in tracks)
+
         return total_time_seconds / 1000
 
     def maybe_remove_playlist_items(self):
         response_json = self.get_playlist()
         total_time = self.get_playlist_total_dutation(response_json)
-        allowed_time_seconds = 10200
 
-        if (total_time > allowed_time_seconds):
-            time_diference = total_time - allowed_time_seconds
+        if (total_time > TOTAL_ALLOWED_TIME_IN_SECODS):
+            time_diference = total_time - TOTAL_ALLOWED_TIME_IN_SECODS
             self.remove_track(response_json, time_diference)
         else:
             print("Time is already capped.")
@@ -58,7 +59,7 @@ class SpotifyClient:
 
     def get_tracks_to_delete(self, response_json, time_diference):
         tracks_uri = []
-        tracks = [track for track in response_json['tracks']['items']]
+        tracks = response_json['tracks']['items']
         amount_to_delete = 0
         track_count = 0
         for i in range(len(tracks)):
