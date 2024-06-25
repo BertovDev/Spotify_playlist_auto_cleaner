@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from spotify_client import SpotifyClient
 import requests
 from urllib.parse import urlencode
@@ -8,9 +9,12 @@ import uvicorn
 
 app = FastAPI()
 
-client_id = ""
-client_secret = ""
-redirect_uri = "http://localhost:3000/callback"
+load_dotenv()
+
+client_id = os.getenv("CLIENT_ID")
+client_secret = os.getenv("CLIENT_SECRET")
+redirect_uri = os.getenv("REDIRECT_URI")
+playlist_url = os.getenv("PLAYLIST_URL")
 
 
 def get_access_token_debug():
@@ -53,16 +57,16 @@ async def auth():
 @app.get("/callback")
 async def callback(code):
     access_token = get_access_token(code)
-    spotify_client = SpotifyClient(access_token)
+    spotify_client = SpotifyClient(access_token, playlist_url)
     spotify_client.maybe_remove_playlist_items()
 
 
 def debug():
     access_token = get_access_token_debug()
-    spotify_client = SpotifyClient(access_token)
+    spotify_client = SpotifyClient(access_token, playlist_url)
     spotify_client.maybe_remove_playlist_items()
 
 
 if __name__ == "__main__":
-    uvicorn.run(app)
-    # debug()
+    # uvicorn.run(app)
+    debug()

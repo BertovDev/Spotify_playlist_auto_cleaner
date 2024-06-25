@@ -1,17 +1,17 @@
 import requests
 from urllib.parse import urlparse
 import json
-
-playlist_url = ""
+import os
 
 
 class SpotifyClient:
-    def __init__(self, access_token):
+    def __init__(self, access_token, playlist_url):
         self.access_token = access_token
+        self.playlist_url = playlist_url
 
     def get_playlist(self):
         response = requests.get(
-            playlist_url,
+            self.playlist_url,
             headers={
                 "Content-Type": "application/json",
                                 "Authorization": f"Bearer {self.access_token}"
@@ -51,7 +51,7 @@ class SpotifyClient:
         }
 
         remove_response = requests.delete(
-            f"{playlist_url}/tracks", headers=headers, data=json.dumps(params, ensure_ascii=False))
+            f"{self.playlist_url}/tracks", headers=headers, data=json.dumps(params, ensure_ascii=False))
 
         print(remove_response.text)
         print("Delete " + str(len(tracks_uri)) + " tracks")
