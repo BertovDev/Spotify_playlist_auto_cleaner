@@ -4,6 +4,9 @@
 
 ### How to use it
 
+#### Spotify config
+- First of all you have to create an spotify app, follow this: https://developer.spotify.com/documentation/web-api
+#### Project config
 - Start the enviroment ```. .venv/bin/activate```
 - Add ```.env``` with you credentials
   -   ```CLIENT_ID = ""```
